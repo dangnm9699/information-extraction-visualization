@@ -5,6 +5,13 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 import "./styles/App.css";
 import { useCallback, useEffect, useState } from "react";
 
@@ -129,16 +136,14 @@ export default function App() {
     });
     let relationsList = [];
     output.relations.forEach((relation, index) => {
-      relationsList.push(
-        <div key={`relation-${index}`} className="relation">
-          <div>[{relation.source_entity.index}] {relation.source_entity.value}</div>
-          <div>&nbsp;&rarr;&nbsp;</div>
-          <div>[{relation.target_entity.index}] {relation.target_entity.value}</div>
-          <div>&nbsp;:&nbsp;</div>
-          <div>{relation.relation}</div>
-        </div>
-      )
-    })
+      relationsList.push({
+        start_index: relation.source_entity.index,
+        start_value: relation.source_entity.value,
+        relation: relation.relation,
+        end_index: relation.target_entity.index,
+        end_value: relation.target_entity.value
+      });
+    });
     setRelations([...relationsList]);
     setEntities([...words]);
   }, [output]);
@@ -188,12 +193,39 @@ export default function App() {
             </LoadingButton>
           </div>
         </div>
-        <div className="output row" style={{ flexDirection: "row", flex: "1" }}>
-          <div className="column" style={{ flexFlow: "wrap", lineHeight: "2.75rem", fontSize: "1.25rem", width: "70%" }}>
+        <div className="output row" style={{ flexDirection: "row" }}>
+          <div className="column" style={{ flexFlow: "wrap", lineHeight: "2.75rem", fontSize: "1.25rem", width: "50%" }}>
             {entities}
           </div>
-          <div className="column" style={{ flexDirection: "column", width: "30%" }}>
-            {relations}
+          <div className="column" style={{ flexDirection: "column", width: "50%" }}>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="right">Src Idx</TableCell>
+                    <TableCell align="right">Src Val</TableCell>
+                    <TableCell align="right">Relation</TableCell>
+                    <TableCell align="right">Dst Idx</TableCell>
+                    <TableCell align="right">Dst Val</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {relations.map((relation, idx) => (
+                    <TableRow
+                      key={`relation-${idx}`}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                      <TableCell align="right">[{relation.start_index}]</TableCell>
+                      <TableCell align="right">{relation.start_value}</TableCell>
+                      <TableCell align="right">{relation.relation}</TableCell>
+                      <TableCell align="right">[{relation.end_index}]</TableCell>
+                      <TableCell align="right">{relation.end_value}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
           </div>
         </div>
       </div>
