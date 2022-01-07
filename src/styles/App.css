@@ -11,8 +11,12 @@
   flex-direction: column;
 }
 
+.relation {
+  display: flex;
+  flex-flow: wrap;
+}
+
 .column {
-  width: 50%;
   display: flex;
 }
 
